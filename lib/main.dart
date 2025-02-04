@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
       // This enables the app to switch between light and dark mode
       // based on system settings
       themeMode: ThemeMode.system,
+      debugShowCheckedModeBanner: false,
       initialRoute: '/login',
       routes: {
         '/login': (context) => const LoginScreen(),
