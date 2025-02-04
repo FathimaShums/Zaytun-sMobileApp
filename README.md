@@ -44,7 +44,6 @@ static const String baseUrl = 'http://16.170.228.132';
 ```
 
 5. Run the app:
-on terminal:
 flutter run
 
 
