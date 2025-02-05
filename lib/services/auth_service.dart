@@ -4,7 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user.dart';
 
 class AuthService {
-  static const String baseUrl = 'http://192.168.55.15:8000/api';
+  
+  static const String baseUrl = 'http://16.170.228.132:8000/api';  
   static const String tokenKey = 'auth_token';
 
   Future<String?> getStoredToken() async {
@@ -38,19 +39,18 @@ class AuthService {
   Future<Map<String, dynamic>> register({
     required String name,
     required String email,
-    required String password,
     required String phoneNumber,
     required String address,
+    required String password,
   }) async {
     final response = await http.post(
       Uri.parse('$baseUrl/register'),
       body: {
         'name': name,
         'email': email,
-        'password': password,
-        'password_confirmation': password,
         'phone_number': phoneNumber,
         'address': address,
+        'password': password,
       },
     );
 

@@ -40,7 +40,7 @@ flutter pub get
 4. Update the API base URL:
 Navigate to `lib/shared/constants.dart` and update the `baseUrl` to your backend server address:
 ```dart
-static const String baseUrl = 'http://16.170.228.132';
+static const String baseUrl = 'http://16.170.228.132';   
 ```
 
 5. Run the app:

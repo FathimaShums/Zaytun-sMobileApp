@@ -1,8 +1,8 @@
 // lib/shared/constants.dart
 class AppConstants {
   // API URLs
-  static const String baseUrl = 'http://192.168.55.15:8000/api';
-  static const String baseImageUrl = 'http://192.168.55.15:8000/storage/';
+  static const String baseUrl = 'http://16.170.228.132:8000/api';
+  static const String baseImageUrl = 'http://16.170.228.132:8000/storage/';
 
   // API Endpoints
   static const String loginEndpoint = '/login';

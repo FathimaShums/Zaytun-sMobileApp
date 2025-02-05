@@ -1,5 +1,5 @@
-// lib/main.dart
 import 'package:flutter/material.dart';
+import 'services/auth_service.dart';  // Add this import
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/register_screen.dart';
 import 'screens/home/food_list_screen.dart';
@@ -9,7 +9,8 @@ import 'screens/cart/cart_screen.dart';
 import 'screens/profile/profile_screen.dart';
 import 'shared/theme.dart';
 
-void main() {
+void main() async {  // Make main async
+  WidgetsFlutterBinding.ensureInitialized();  // Add this
   runApp(const MyApp());
 }
 
@@ -22,11 +23,24 @@ class MyApp extends StatelessWidget {
       title: 'Food App',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      // This enables the app to switch between light and dark mode
-      // based on system settings
       themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
-      initialRoute: '/login',
+      home: FutureBuilder<String?>(
+        future: AuthService().getStoredToken(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+          
+          if (snapshot.hasData && snapshot.data != null) {
+            return const FoodListScreen();
+          }
+          
+          return const LoginScreen();
+        },
+      ),
       routes: {
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),

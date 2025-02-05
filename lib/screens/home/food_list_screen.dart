@@ -7,6 +7,7 @@ import '../../shared/widgets/food_item_card.dart';
 import '../favorites/favorites_screen.dart';
 import '../cart/cart_screen.dart';
 import '../profile/profile_screen.dart';
+import 'food_detail_screen.dart';
 
 class FoodListScreen extends StatefulWidget {
   const FoodListScreen({Key? key}) : super(key: key);
@@ -131,22 +132,38 @@ class _FoodListScreenState extends State<FoodListScreen> {
           final item = _foodItems[index];
           return FoodItemCard(
             foodItem: item,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FoodDetailScreen(foodItem: item),
+                ),
+              );
+            },
             onAddToCart: (foodItem) async {
-              await _storageService.addToCart(foodItem);
-              if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('${foodItem.name} added to cart'),
-                    action: SnackBarAction(
-                      label: 'View Cart',
-                      onPressed: () {
-                        setState(() {
-                          _currentIndex = 2; // Switch to cart screen
-                        });
-                      },
+              try {
+                await _storageService.addToCart(foodItem);
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('${foodItem.name} added to cart'),
+                      action: SnackBarAction(
+                        label: 'View Cart',
+                        onPressed: () {
+                          setState(() {
+                            _currentIndex = 2; // Switch to cart screen
+                          });
+                        },
+                      ),
                     ),
-                  ),
-                );
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Failed to add item to cart')),
+                  );
+                }
               }
             },
           );

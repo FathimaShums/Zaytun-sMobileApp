@@ -5,7 +5,8 @@ import '../models/food_item.dart';
 import 'package:flutter/services.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://192.168.55.15:8000/api';
+  
+  static const String baseUrl = 'http://16.170.228.132:8000/api';
 
   Future<bool> checkConnectivity() async {
     final connectivityResult = await Connectivity().checkConnectivity();

@@ -42,12 +42,14 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   double get _totalPrice {
-    return _cartItems.fold(
-        0,
-        (total, item) =>
-            total +
-            (double.parse(item.foodItem.price as String) * item.quantity));
-  }
+  return _cartItems.fold(0, (total, item) {
+    // Handle both String and double price types
+    final price = item.foodItem.price is String 
+        ? double.parse(item.foodItem.price as String)
+        : item.foodItem.price as double;
+    return total + (price * item.quantity);
+  });
+}
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +136,7 @@ class _CartScreenState extends State<CartScreen> {
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(8),
                                   child: Image.network(
-                                    'http://192.168.55.15:8000/storage/${item.foodItem.image}',
+                                    'http://16.170.228.132:8000/storage/${item.foodItem.image}', 
                                     width: 80,
                                     height: 80,
                                     fit: BoxFit.cover,

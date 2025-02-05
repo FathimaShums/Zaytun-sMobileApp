@@ -1,5 +1,5 @@
 // lib/shared/widgets/food_item_card.dart
-import 'package:cached_network_image/cached_network_image.dart';
+
 import 'package:flutter/material.dart';
 import '../../models/food_item.dart';
 import '../../services/local_storage_service.dart';
@@ -22,7 +22,7 @@ class FoodItemCard extends StatefulWidget {
 
 class _FoodItemCardState extends State<FoodItemCard> {
   final LocalStorageService _storageService = LocalStorageService();
-  bool isFavorite = false;
+  bool _isFavorite = false;
 
   @override
   void initState() {
@@ -31,10 +31,10 @@ class _FoodItemCardState extends State<FoodItemCard> {
   }
 
   Future<void> _checkFavoriteStatus() async {
-    final status = await _storageService.isFavorite(widget.foodItem.id);
+    final isFavorite = await _storageService.isFavorite(widget.foodItem.id);
     if (mounted) {
       setState(() {
-        isFavorite = status;
+        _isFavorite = isFavorite;
       });
     }
   }
@@ -47,48 +47,40 @@ class _FoodItemCardState extends State<FoodItemCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image section
+            // Image and Favorite Button Stack
             Stack(
               children: [
-                ClipRRect(
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(12)),
-                  child: widget.foodItem.image != null
-                      ? CachedNetworkImage(
-                          imageUrl:
-                              'http://192.168.55.15:8000/storage/${widget.foodItem.image}',
-                          height: 150,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => Container(
-                            color: Colors.grey[300],
-                            child: const Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          ),
-                          errorWidget: (context, url, error) => Container(
-                            color: Colors.grey[300],
-                            child: const Icon(Icons.restaurant, size: 50),
-                          ),
-                        )
-                      : Container(
-                          height: 150,
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.restaurant, size: 50),
-                        ),
-                ),
+                if (widget.foodItem.image != null)
+                  Image.network(
+                    'http://16.170.228.132:8000/storage/${widget.foodItem.image}', // Updated URL
+                    height: 150,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        height: 150,
+                        color: Colors.grey[300],
+                        child: const Icon(Icons.restaurant, size: 50),
+                      );
+                    },
+                  )
+                else
+                  Container(
+                    height: 150,
+                    color: Colors.grey[300],
+                    child: const Icon(Icons.restaurant, size: 50),
+                  ),
                 Positioned(
                   top: 8,
                   right: 8,
                   child: IconButton(
                     icon: Icon(
-                      isFavorite ? Icons.favorite : Icons.favorite_border,
-                      color: isFavorite ? Colors.red : Colors.white,
+                      _isFavorite ? Icons.favorite : Icons.favorite_border,
+                      color: _isFavorite ? Colors.red : Colors.grey,
                     ),
                     onPressed: () async {
-                      if (isFavorite) {
-                        await _storageService
-                            .removeFromFavorites(widget.foodItem.id);
+                      if (_isFavorite) {
+                        await _storageService.removeFromFavorites(widget.foodItem.id);
                       } else {
                         await _storageService.addToFavorites(widget.foodItem);
                       }
@@ -98,9 +90,8 @@ class _FoodItemCardState extends State<FoodItemCard> {
                 ),
               ],
             ),
-            // Content section
             Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -113,7 +104,7 @@ class _FoodItemCardState extends State<FoodItemCard> {
                   const SizedBox(height: 4),
                   Text(
                     widget.foodItem.description,
-                    style: Theme.of(context).textTheme.bodyMedium,
+                    style: Theme.of(context).textTheme.bodySmall,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -123,15 +114,11 @@ class _FoodItemCardState extends State<FoodItemCard> {
                     children: [
                       Text(
                         '\$${widget.foodItem.price}',
-                        style:
-                            Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                        style: Theme.of(context).textTheme.titleMedium,
                       ),
-                      ElevatedButton.icon(
-                        onPressed: () => widget.onAddToCart(widget.foodItem),
+                      IconButton(
                         icon: const Icon(Icons.add_shopping_cart),
-                        label: const Text('Add'),
+                        onPressed: () => widget.onAddToCart(widget.foodItem),
                       ),
                     ],
                   ),
