@@ -1,4 +1,5 @@
 // lib/screens/home/food_detail_screen.dart
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../models/food_item.dart';
 import '../../services/local_storage_service.dart';
@@ -31,18 +32,22 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
           children: [
             // Image
             if (widget.foodItem.image != null)
-              Image.network(
-                'http://192.168.55.15:8000/storage/${widget.foodItem.image}',
+              CachedNetworkImage(
+                imageUrl:
+                    'http://192.168.55.15:8000/storage/${widget.foodItem.image}',
                 height: 250,
                 width: double.infinity,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    height: 250,
-                    color: Colors.grey[300],
-                    child: const Icon(Icons.restaurant, size: 50),
-                  );
-                },
+                placeholder: (context, url) => Container(
+                  color: Colors.grey[300],
+                  child: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  color: Colors.grey[300],
+                  child: const Icon(Icons.restaurant, size: 50),
+                ),
               ),
 
             Padding(
