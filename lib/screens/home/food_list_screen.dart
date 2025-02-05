@@ -30,7 +30,27 @@ class _FoodListScreenState extends State<FoodListScreen> {
   }
 
   Future<void> _loadFoodItems() async {
-    // ... existing loading logic ...
+    setState(() {
+      _isLoading = true;
+      _errorMessage = '';
+    });
+
+    try {
+      final items = await _apiService.getFoodItems();
+      if (mounted) {
+        setState(() {
+          _foodItems = items;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'Failed to load food items. Please try again.';
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
